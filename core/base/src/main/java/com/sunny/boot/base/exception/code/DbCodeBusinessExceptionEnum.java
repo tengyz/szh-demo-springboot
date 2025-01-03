@@ -14,7 +14,8 @@ import com.sunny.boot.base.enums.IEnum;
 public enum DbCodeBusinessExceptionEnum implements IEnum<Integer> {
     新增失败(3000, "数据库新增失败，主键值是不在数据库存在"),
     更新失败(3001, "数据库更新失败，主键值是不在数据库存在"),
-    删除失败(3002, "数据库删除失败，主键值是不在数据库存在");
+    删除失败(3002, "数据库删除失败，主键值是不在数据库存在"),
+    查询失败(3003, "数据库查询失败，主键值是不在数据库存在");
     @EnumValue
     Integer code;
     String name;

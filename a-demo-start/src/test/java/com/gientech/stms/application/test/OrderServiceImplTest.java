@@ -35,6 +35,11 @@ public class OrderServiceImplTest {
     private final static  String DATA_NAME = String.format("测试%s", new Date().getTime());
     private static Long id = null;
 
+    @Test
+    @Tag("junit_test")
+    void test(){
+
+    }
     @Order(2)
     @Test
     void page() {

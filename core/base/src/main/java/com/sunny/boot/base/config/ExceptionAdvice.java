@@ -16,8 +16,7 @@ import javax.validation.ConstraintViolationException;
 /**
  * 控制层异常处理切面
  */
-@RestControllerAdvice(basePackages = {"com"
-})
+@RestControllerAdvice(basePackages = {"com"})
 public class ExceptionAdvice {
     /**
      * 捕获 {@code BusinessException} 异常

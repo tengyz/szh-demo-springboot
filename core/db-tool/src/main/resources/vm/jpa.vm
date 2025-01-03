@@ -76,6 +76,28 @@ public class $!{tableInfo.name}JPA extends $!{tableInfo.name}DO {
     public String getDelFlag() {
         return super.getDelFlag();
     }
+// 多对多示例
+// 1、在从表的DO对像引入主表对像
+//    OrderJPA order;
+// 2、构建多对一的关系
+//    @ManyToOne(fetch = FetchType.LAZY)
+// 3、注意refId , 在父类DO里要建相应字段 ，字段名示例：  orderId
+//    @JoinColumn(referencedColumnName = "id")
+//    @Comment("订单表Id")
+// 4、对从表的DO对像生成get set，且jpa注解放在get方法上
+//    public OrderJPA getOrder() {
+//        return order;
+//    }
+//
+//    public void setOrder(OrderJPA order) {
+//        this.order = order;
+//    }
+// 5、 因主表是mybatis机制，需映射字段 如 order_id, 针对JPA，需要使用@Transient将该字段忽略
+//    @Transient
+//    @Override
+//    public Long getOrderId() {
+//        return super.getOrderId();
+//    }
 }
 
 

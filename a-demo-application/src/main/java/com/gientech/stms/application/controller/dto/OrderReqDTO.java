@@ -53,8 +53,8 @@ private static final long serialVersionUID = -25154920869172556L;
         /**
     * 姓名
     */
-    @ApiModelProperty("姓名")
     @NotEmpty(groups =ValidateGroupEnum.UpdateGroup.class)
+    @ApiModelProperty("姓名")
         private String name;
         /**
     * 更新人

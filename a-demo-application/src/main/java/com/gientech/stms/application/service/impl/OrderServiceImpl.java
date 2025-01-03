@@ -19,7 +19,7 @@ import java.util.Optional;
  * 订单表(Order)表服务实现
  *
  * @author sunzh
- * @since 2025-01-02 17:55:09
+ * @since 2025-01-02 23:00:01
  */
 
 @Validated
@@ -52,7 +52,11 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public OrderDO load(Long  id){
-        return this.orderDAO.load(id);
+        OrderDO orderDO = this.orderDAO.load(id);
+        if(!Optional.ofNullable(orderDO).isPresent()){
+            throw new BusinessException(DbCodeBusinessExceptionEnum.查询失败);
+        }
+        return orderDO;
     }
 
     /**

@@ -66,7 +66,11 @@ public class $!{tableName}Impl implements $!{tableName} {
      */
     @Override
     public $!{tableInfo.name}DO load($!pk.shortType  $!pk.name){
-        return this.$!{tool.firstLowerCase($tableInfo.name)}DAO.load(id);
+        $!{tableInfo.name}DO $!{tool.firstLowerCase($tableInfo.name)}DO = this.$!{tool.firstLowerCase($tableInfo.name)}DAO.load(id);
+        if(!Optional.ofNullable($!{tool.firstLowerCase($tableInfo.name)}DO).isPresent()){
+            throw new BusinessException(DbCodeBusinessExceptionEnum.查询失败);
+        }
+        return $!{tool.firstLowerCase($tableInfo.name)}DO;
     }
 
     /**
