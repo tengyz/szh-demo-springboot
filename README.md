@@ -30,4 +30,4 @@ http://localhost:38080/doc.html
 4.安装代码生成插件EasyCode，安装好之后，在core工程resources下导入EasyCodeConfig.json，需要配合Database插件一起使用，在弹出框进行勾选-选择代码生成。
 对应到a-demo-application 业务模块工程目录中可以生产代码有：
 controller、service、serviceimpl、validate、dao、do、jpa、junit、mapper、pagereqdto、reqdto、rsqdto、
-
+注意：新增a-demo-application 业务工程里面新增模块的时候需要修改：spring.factories文件，防止随意新增模块代码导致扫描不受控制。
