@@ -1,0 +1,61 @@
+#if($tableInfo.obj.name.startsWith("gj_"))    
+$!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "CodeExceptionEnum"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, ".java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/exception"))
+
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}exception;
+
+
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.sunny.boot.base.enums.IEnum;
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})表业务异常枚举
+ *
+ * @author $!author
+ * @since $!time.currTime()
+ */
+
+public enum $tableName implements IEnum<Integer> {
+    /**
+    * 不同模块异常 编号 从3100开始分配
+    */
+    $!{tableInfo.name}3100(3100, "业务未知异常");
+    @EnumValue
+    Integer code;
+    String name;
+
+    $tableName (int code, String name) {
+    this.code = code;
+    this.name = name;
+    }
+
+    /**
+    * 根据code取枚举对象
+    *
+    * @param code
+    * @return
+    */
+    @JsonCreator
+    public static $tableName  getByCode(Integer code) {
+    return IEnum.getEnumByCode(code, $tableName .values());
+    }
+
+    @Override
+    public String getName() {
+    return this.name();
+    }
+
+    @Override
+    public Integer getValue() {
+    return code;
+    }
+
+}
+
+ 

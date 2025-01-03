@@ -1,0 +1,124 @@
+#if($tableInfo.obj.name.startsWith("gj_"))    
+$!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "Controller"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, ".java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/controller"))
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
+#end
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}controller;
+
+import $!{tableInfo.savePackageName}.persistent.entity.$!{tableInfo.name}DO;
+import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.sunny.boot.base.controller.dto.PageResponseDTO;
+import com.sunny.boot.base.controller.dto.ResponseDTO;
+import $!{tableInfo.savePackageName}.controller.dto.$!{tableInfo.name}ReqDTO;
+import $!{tableInfo.savePackageName}.controller.dto.$!{tableInfo.name}RspDTO;
+import $!{tableInfo.savePackageName}.controller.dto.Page$!{tableInfo.name}ReqDTO; 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import com.sunny.boot.base.exception.code.ResultEnum;
+import com.sunny.boot.base.enums.ValidateGroupEnum;
+import java.io.Serializable;
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})表控制层
+ *
+ * @author $!author
+ * @since $!time.currTime()
+ */
+@RestController
+@RequestMapping("/gj/$!tool.firstLowerCase($tableInfo.name)")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Api(tags = "$!{tableInfo.comment}模块接口")
+public class $!{tableName} { 
+     /**
+     * 服务对象
+     */ 
+    private final  $!{tableInfo.name}Service $!tool.firstLowerCase($tableInfo.name)Service;
+     /**
+     * 分页查询
+     * 
+     * @param req      分页对象
+     * @return 查询结果
+     */
+    @ApiOperation(value = "分页查询列表")
+    @PostMapping("/page")
+    public PageResponseDTO<$!{tableInfo.name}RspDTO> page(@Validated({ValidateGroupEnum.PageGroup.class})  @RequestBody Page$!{tableInfo.name}ReqDTO req) {
+ 
+        IPage<$!{tableInfo.name}DO> result=this.$!{tool.firstLowerCase($tableInfo.name)}Service.page(BeanUtil.copyProperties(req.getQueryParam(), $!{tableInfo.name}DO.class)
+                ,req.getPageSize(),req.getPageNum());
+        return PageResponseDTO.<$!{tableInfo.name}RspDTO>builder().
+                count(result.getTotal()).data(
+                        result.getRecords().stream().map(v->$!{tableInfo.name}RspDTO.builder()
+                                        //TODO 控制层进行对像转换
+                                        .name(v.getName())
+                                        .build())
+                                .collect(Collectors.toList())
+                ).code(ResultEnum.SUCCESS.getCode()).desc(ResultEnum.SUCCESS.getMessage()).build();
+    }
+  
+ 
+    /**
+     * 通过主键查询单条数据
+     *
+     * @param id 主键
+     * @return 单条数据
+     */
+    @ApiOperation(value = "根据主键加载数据")
+    @GetMapping("/load/{id}")
+    public ResponseDTO<$!{tableInfo.name}RspDTO> load(@PathVariable(value = "id") Long id){
+        $!{tableInfo.name}DO $!{tableInfo.name}DO=  this.$!{tool.firstLowerCase($tableInfo.name)}Service.load(id);
+
+        return ResponseDTO.succeed($!{tableInfo.name}RspDTO.builder()
+                //TODO 控制层进行对像转换
+                .name($!{tableInfo.name}DO.getName())
+                .build());
+
+    }
+
+    @ApiOperation(value = "更新数据")
+    @PostMapping("/update")
+    public ResponseDTO update(@Validated({ValidateGroupEnum.UpdateGroup.class}) @RequestBody $!{tableInfo.name}ReqDTO req){
+
+        this.$!{tool.firstLowerCase($tableInfo.name)}Service.update(BeanUtil.copyProperties(req, $!{tableInfo.name}DO.class));
+        return ResponseDTO.succeed();
+    }
+    @ApiOperation(value = "逻辑删除数据")
+    @GetMapping("/remove/{id}")
+    public ResponseDTO remove(@PathVariable(value = "id") Long id){
+        this.$!{tool.firstLowerCase($tableInfo.name)}Service.remove(id);
+        return ResponseDTO.succeed();
+    }
+    @ApiOperation(value = "根据条件查询数据")
+    @PostMapping("/list")
+    public ResponseDTO<List<$!{tableInfo.name}RspDTO>> list(@Validated({ValidateGroupEnum.ListGroup.class}) @RequestBody $!{tableInfo.name}ReqDTO req){
+
+        List<$!{tableInfo.name}DO> result= this.$!{tool.firstLowerCase($tableInfo.name)}Service.list(BeanUtil.copyProperties(req, $!{tableInfo.name}DO.class));
+        return ResponseDTO.succeed( result.stream().map(v->$!{tableInfo.name}RspDTO.builder()
+                        //TODO 控制层进行对像转换
+                        .name(v.getName())
+                        .build())
+                .collect(Collectors.toList()));
+    }
+    @ApiOperation(value = "新增数据")
+    @PostMapping("/add")
+    public ResponseDTO add(@Validated({ValidateGroupEnum.AddGroup.class}) @RequestBody $!{tableInfo.name}ReqDTO req){
+
+        Serializable id=this.$!{tool.firstLowerCase($tableInfo.name)}Service.add(BeanUtil.copyProperties(req, $!{tableInfo.name}DO.class));
+        return ResponseDTO.succeed(id);
+    }
+}

@@ -1,0 +1,81 @@
+#if($tableInfo.obj.comment.startsWith("gj_"))
+    $!tableInfo.setName($tool.getClassName($tableInfo.obj.comment.substring(3)))
+#end
+##引入宏定义
+$!{define.vm}
+
+
+
+##设置回调
+$!callback.setFileName($tool.append($tableInfo.name, "JPA.java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/persistent/jpa"))
+##使用全局变量实现默认包导入
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}persistent.jpa;
+
+
+
+import $!{tableInfo.savePackageName}.persistent.entity.$!{tableInfo.name}DO;
+import org.hibernate.annotations.Comment;
+import skdapp.cn.fulltext.config.TableComment;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+/**
+* $!{tableInfo.comment}($!{tableInfo.name})表JPA定义
+*
+* @author $!author
+* @since $!time.currTime()
+*/
+@Entity(name = $!{tableInfo.name}DO.TABLE_NAME)
+@TableComment("TODO 描述表")
+@Table(name = $!{tableInfo.name}DO.TABLE_NAME, indexes = {
+@Index(columnList = "delFlag") }
+)
+public class $!{tableInfo.name}JPA extends $!{tableInfo.name}DO {
+    @Override
+    @Id
+    @Comment("主键")
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    @Comment("姓名")
+    public String getName() {
+        return super.getName();
+    }
+
+    @Comment("创建人")
+    @Column( length = 64)
+    @Override
+    public String getCreatedBy() {
+        return super.getCreatedBy();
+    }
+
+    @Comment("更新人")
+    @Override
+    @Column( length = 64)
+    public String getUpdatedBy() {
+        return super.getUpdatedBy();
+    }
+
+    @Comment("创建时间")
+    @Override
+    public LocalDateTime getCreatedTime() {
+        return super.getCreatedTime();
+    }
+
+    @Comment("更新时间")
+    @Override
+    public LocalDateTime getUpdatedTime() {
+        return super.getUpdatedTime();
+    }
+    @Comment("是否删除  Y：已删除  N：正常")
+    @Column( columnDefinition = " varchar(1) NOT NULL DEFAULT 'N' " )
+    @Override
+    public String getDelFlag() {
+        return super.getDelFlag();
+    }
+}
+
+

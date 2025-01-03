@@ -1,0 +1,43 @@
+#if($tableInfo.obj.comment.startsWith("gj_"))
+    $!tableInfo.setName($tool.getClassName($tableInfo.obj.comment.substring(3)))
+#end
+##引入宏定义
+$!{define.vm}
+
+
+
+##设置回调
+$!callback.setFileName($tool.append($tableInfo.name, "DO.java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/persistent/entity"))
+##使用全局变量实现默认包导入
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}persistent.entity;
+
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.sunny.boot.base.persistent.entity.BaseDO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
+import lombok.experimental.SuperBuilder;
+/**
+* $!{tableInfo.comment}($!{tableInfo.name})表对像
+*
+* @author $!author
+* @since $!time.currTime()
+*/
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldNameConstants
+@TableName($!{tableInfo.name}DO.TABLE_NAME)
+public class $!{tableInfo.name}DO extends BaseDO {
+    public final static String TABLE_NAME="${tableInfo.comment}";
+
+    @TableField(value = "name")
+    String name;
+}
+
+

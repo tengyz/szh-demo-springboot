@@ -1,0 +1,31 @@
+#if($tableInfo.obj.name.startsWith("gj_"))
+    $!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+
+
+##设置回调
+$!callback.setFileName($tool.append($tableInfo.name, "DAO.java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/persistent/dao"))
+##使用全局变量实现默认包导入
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}persistent.dao;
+
+
+import com.sunny.boot.base.persistent.dao.BaseDAOImpl;
+import com.sunny.boot.base.service.PermitsService;
+import $!{tableInfo.savePackageName}.persistent.entity.$!{tableInfo.name}DO;
+import $!{tableInfo.savePackageName}.persistent.mapper.$!{tableInfo.name}Mapper;
+import org.springframework.stereotype.Component;
+
+/**
+* $!{tableInfo.comment}($!{tableInfo.name})表DAO层
+*
+* @author $!author
+* @since $!time.currTime()
+*/
+@Component
+public class $!{tableInfo.name}DAO extends BaseDAOImpl<$!{tableInfo.name}Mapper, $!{tableInfo.name}DO> {
+
+    protected $!{tableInfo.name}DAO(PermitsService permitsService) {
+        super(permitsService);
+    }
+}

@@ -1,0 +1,88 @@
+#if($tableInfo.obj.name.startsWith("gj_"))    
+$!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "ServiceImplTest"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, ".java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/test"))
+
+
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}test;
+
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.gientech.stms.demo.start.StartDemoApplication;
+import $!{tableInfo.savePackageName}.persistent.entity.$!{tableInfo.name}DO;
+import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Date;
+import java.util.List;
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})测试类
+ *
+ * @author $!author
+ * @since $!time.currTime()
+ */
+
+@SpringBootTest(classes = StartDemoApplication.class)
+@ActiveProfiles("test")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Tag("junit_$tool.hump2Underline($tableInfo.name)")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class $tableName {
+    /**
+    * 服务对象
+    */
+    private final  $!{tableInfo.name}Service $!tool.firstLowerCase($tableInfo.name)Service;
+
+
+    private final static  String DATA_NAME = String.format("测试%s", new Date().getTime());
+    private static Long id = null;
+
+    @Order(2)
+    @Test
+    void page() {
+        IPage<$!{tableInfo.name}DO> page = this.$!{tool.firstLowerCase($tableInfo.name)}Service.page($!{tableInfo.name}DO.builder().name(DATA_NAME).build(), 10, 2);
+        Assertions.assertEquals(15L, page.getTotal());
+        Assertions.assertEquals(5L, page.getRecords().size());
+    }
+
+    @Order(4)
+    @Test
+    void load() {
+         $!{tableInfo.name}DO $!{tool.firstLowerCase($tableInfo.name)}DO = this.$!{tool.firstLowerCase($tableInfo.name)}Service.load(id);
+        Assertions.assertEquals("测试", $!{tool.firstLowerCase($tableInfo.name)}DO.getName());
+    }
+
+    @Order(3)
+    @Test
+    void update() {
+        this.$!{tool.firstLowerCase($tableInfo.name)}Service.update($!{tableInfo.name}DO.builder().id(id).name("测试").build());
+    }
+
+    @Order(5)
+    @Test
+    void remove() {
+        this.$!{tool.firstLowerCase($tableInfo.name)}Service.remove(id);
+    }
+
+    @Order(6)
+    @Test
+    void list() {
+        List<$!{tableInfo.name}DO> list = this.$!{tool.firstLowerCase($tableInfo.name)}Service.list($!{tableInfo.name}DO.builder().name(DATA_NAME).build());
+        Assertions.assertEquals(14L, list.size());
+    }
+    @RepeatedTest(15)
+    @Order(1)
+    void add() {
+        id = (Long) this.$!{tool.firstLowerCase($tableInfo.name)}Service.add($!{tableInfo.name}DO.builder().name(DATA_NAME).build());
+        Assertions.assertNotNull(id);
+    }
+}

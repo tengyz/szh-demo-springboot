@@ -1,0 +1,22 @@
+#if($tableInfo.obj.name.startsWith("gj_"))
+    $!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+
+/**
+* $!{tableInfo.comment}($!{tableInfo.name})表Mapper定义
+*
+* @author $!author
+* @since $!time.currTime()
+*/
+##设置回调
+$!callback.setFileName($tool.append($tableInfo.name, "Mapper.java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/persistent/mapper"))
+##使用全局变量实现默认包导入
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}persistent.mapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import $!{tableInfo.savePackageName}.persistent.entity.$!{tableInfo.name}DO;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface $!{tableInfo.name}Mapper extends BaseMapper<$!{tableInfo.name}DO> {
+}

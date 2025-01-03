@@ -1,0 +1,55 @@
+#if($tableInfo.obj.name.startsWith("gj_"))
+    $!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+##引入宏定义
+$!{define.vm}
+
+
+
+##设置回调
+$!callback.setFileName($tool.append($tableInfo.name, "RspDTO.java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/controller/dto"))
+##使用全局变量实现默认包导入
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}controller.dto;
+import lombok.Builder;
+import lombok.Data;
+import io.swagger.annotations.ApiModel;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Date;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import com.sunny.boot.base.enums.LogicDeleteEnum;
+/**
+* $!{tableInfo.comment}($!{tableInfo.name})表对像返回参数
+*
+* @author $!author
+* @since $!time.currTime()
+*/
+@SuperBuilder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel("$!{tableInfo.comment}分页请求参数")
+public class $!{tableInfo.name}RspDTO  implements Serializable {
+    private static final long serialVersionUID = $!tool.serial();
+#foreach($column in $tableInfo.fullColumn)
+    #if(${column.comment})/**
+    * ${column.comment}
+    */#end
+
+    @ApiModelProperty("${column.comment}")
+    #if(${column.name}=="delFlag")
+    private LogicDeleteEnum  $!{column.name};
+    #else
+    private $!{tool.getClsNameByFullName($column.type)} $!{column.name};
+    #end
+#end
+
+
+
+}

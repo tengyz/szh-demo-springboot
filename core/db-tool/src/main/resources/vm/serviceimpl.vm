@@ -1,0 +1,135 @@
+#if($tableInfo.obj.name.startsWith("gj_"))
+$!tableInfo.setName($tool.getClassName($tableInfo.obj.name.substring(3)))
+#end
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "Service"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, "Impl.java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/service/impl"))
+
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
+#end
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}service.impl;
+import org.apache.commons.lang3.StringUtils;
+import $!{tableInfo.savePackageName}.persistent.entity.$!{tableInfo.name}DO;
+import $!{tableInfo.savePackageName}.persistent.dao.$!{tableInfo.name}DAO;
+import $!{tableInfo.savePackageName}.service.$!{tableName};
+import $!{tableInfo.savePackageName}.exception.$!{tableInfo.name}CodeExceptionEnum;
+import com.sunny.boot.base.exception.code.DbCodeBusinessExceptionEnum;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.io.Serializable;
+import org.springframework.validation.annotation.Validated;
+import java.util.List;
+import com.sunny.boot.base.exception.BusinessException;
+import java.util.Optional;
+/**
+ * $!{tableInfo.comment}($!{tableInfo.name})表服务实现
+ *
+ * @author $!author
+ * @since $!time.currTime()
+ */
+
+@Validated
+@Service
+@Transactional
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class $!{tableName}Impl implements $!{tableName} {
+
+    private final $!{tableInfo.name}DAO $!tool.firstLowerCase($tableInfo.name)DAO;
+ /**
+     * 分页查询
+     *
+     * @param param 筛选条件
+     * @param pageSize      分页大小
+     * @param pageNum      起始页
+     * @return 查询结果
+     */
+    @Override
+    public IPage<$!{tableInfo.name}DO> page($!{tableInfo.name}DO param, Integer pageSize, Integer pageNum){
+        return this.$!{tool.firstLowerCase($tableInfo.name)}DAO.page(param, pageSize, pageNum, (queryParam, wrapper) -> {
+            //TODO 完成分页查询逻辑
+            wrapper.like(StringUtils.isNotBlank(queryParam.getName()),$!{tableInfo.name}DO::getName,queryParam.getName());
+        });
+    }
+    /**
+     * 通过ID查询单条数据
+     *
+     * @param $!pk.name 主键
+     * @return 实例对象
+     */
+    @Override
+    public $!{tableInfo.name}DO load($!pk.shortType  $!pk.name){
+        return this.$!{tool.firstLowerCase($tableInfo.name)}DAO.load(id);
+    }
+
+    /**
+     * 修改数据
+     *
+     * @param param 实例对象
+     * @return 实例对象
+     */
+    @Override
+    public void update($!{tableInfo.name}DO param){
+        $!{tableInfo.name}DO $!{tool.firstLowerCase($tableInfo.name)}DO= this.$!{tool.firstLowerCase($tableInfo.name)}DAO.update(param.getId(), param, (queryParam, dbData) -> {
+            //TODO 将页面的值赋值到数据库对像中
+            dbData.setName(queryParam.getName());
+        });
+        if(!Optional.ofNullable($!{tool.firstLowerCase($tableInfo.name)}DO).isPresent()){
+            throw new BusinessException(DbCodeBusinessExceptionEnum.更新失败);
+        }
+    }
+     /**
+     * 通过主键删除数据
+     *
+     * @param $!pk.name 主键
+     * @return 是否成功
+     */
+    @Override
+    public void remove($!pk.shortType $!pk.name) {
+        Boolean flag= this.$!{tool.firstLowerCase($tableInfo.name)}DAO.remove(id);
+        if(!Optional.ofNullable(flag).isPresent()){
+            throw new BusinessException(DbCodeBusinessExceptionEnum.删除失败);
+        }
+    }
+     /**
+     * 根据条件查询数据
+     *
+     * @param param 查询条件
+     * @return 是否成功
+     */
+    @Override
+    public List<$!{tableInfo.name}DO> list($!{tableInfo.name}DO param) {
+        return this.$!{tool.firstLowerCase($tableInfo.name)}DAO.list(param, (queryParam, wrapper) -> {
+            //TODO 完成分页查询逻辑
+            wrapper.like(StringUtils.isNotBlank(queryParam.getName()),$!{tableInfo.name}DO::getName,queryParam.getName());
+        });
+
+    }
+    /**
+     * 新增数据
+     *
+     * @param param 实例对象
+     * @return 实例对象
+     */
+    @Override
+    public Serializable add($!{tableInfo.name}DO param) {
+        Serializable id= this.$!{tool.firstLowerCase($tableInfo.name)}DAO.add(param.getId(), param, (queryParam,dbData) -> {
+            //TODO 根据前端传的值构造数据库对像
+            if(StringUtils.isNotBlank(queryParam.getName())){
+                dbData.setName(queryParam.getName());
+            }
+        });
+        if(!Optional.ofNullable(id).isPresent()){
+            throw new BusinessException(DbCodeBusinessExceptionEnum.新增失败);
+        }
+        return id;
+   }
+}
+
