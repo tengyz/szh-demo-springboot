@@ -27,6 +27,7 @@
 http://localhost:38080/doc.html
 该test下可以进行单元测试，增删查改业务场景的测试。
 
+
 4.安装代码生成插件EasyCode，安装好之后，在core工程resources下导入EasyCodeConfig.json，需要配合Database插件一起使用，在弹出框进行勾选-选择代码生成。
 对应到a-demo-application 业务模块工程目录中可以生产代码有：
 controller、service、serviceimpl、validate、dao、do、jpa、junit、mapper、pagereqdto、reqdto、rsqdto、
