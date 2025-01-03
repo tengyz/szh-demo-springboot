@@ -23,7 +23,6 @@
 <url>https://maven.aliyun.com/repository/public</url>
 </mirror>
 ````
-
 3.修改数据库application.properties配置文件，启动a-demo-start工程下的StartDemoApplicationTests类服务生产表，然后StartDemoApplication启动，访问接口文档
 http://localhost:38080/doc.html
 该test下可以进行单元测试，增删查改业务场景的测试。
